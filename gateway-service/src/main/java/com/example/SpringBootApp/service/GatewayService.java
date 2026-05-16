@@ -6,7 +6,6 @@ import com.example.SpringBootApp.model.dto.GradeDTO;
 import com.example.SpringBootApp.model.dto.GradeDetailsDTO;
 import com.example.SpringBootApp.model.dto.StudentDTO;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import java.util.Arrays;
 import java.util.List;
@@ -129,6 +128,28 @@ public class GatewayService {
                         return course != null ? course.getName() : "Unknown course";
                     } catch (Exception e) {
                         return "Error getting course name";
+                    }
+                })
+                .toList();
+    }
+
+    public List<String> getCourseStudents(Integer courseId) {
+        courseExists(courseId);
+        GradeDTO[] grades = restTemplate.getForObject(GRADE_URL + "course/" + courseId, GradeDTO[].class);
+
+        if (grades == null || grades.length == 0) {
+            throw new EmptyResultException("No students with grades from this course");
+        }
+
+        return java.util.Arrays.stream(grades)
+                .map(GradeDTO::getStudentId)
+                .distinct()
+                .map(studentId -> {
+                    try {
+                        StudentDTO student = restTemplate.getForObject("http://localhost:8081/students/" + studentId, StudentDTO.class);
+                        return student != null ? student.getFirstName(): "Unknown student";
+                    } catch (Exception e) {
+                        return "Error getting student";
                     }
                 })
                 .toList();
