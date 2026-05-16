@@ -10,9 +10,13 @@ import java.util.List;
 
 public interface GradeService {
     List<Grade> getAllGrades();
-    List<Grade> findByStudentId(Integer id);
     Grade getGrade(Integer id) throws GradeNotFoundException;
     Grade addGrade(Grade grade) throws GradeInvalidGradeException;
     Grade updateGrade(Integer id, Grade gradeDetails) throws GradeNotFoundException, GradeInvalidGradeException;
     boolean deleteGrade(Integer id) throws GradeNotFoundException;
+
+    List<Grade> findByStudentId(Integer studentId);
+    List<Grade> findByCourseId(Integer courseId);
+    Long countByCourseIdAndGrade(Integer courseId, Double grade);
+    boolean existsByCourseId(Integer courseId);
 }

@@ -34,11 +34,6 @@ public class GradeServiceImpl implements GradeService {
     }
 
     @Override
-    public List<Grade> findByStudentId(Integer id) {
-        return gradeRepository.findByStudentId(id);
-    }
-
-    @Override
     public Grade getGrade(Integer id) throws GradeNotFoundException {
         return gradeRepository.findById(id)
                 .orElseThrow(GradeNotFoundException::new);
@@ -69,5 +64,27 @@ public class GradeServiceImpl implements GradeService {
         }
         gradeRepository.deleteById(id);
         return true;
+    }
+
+
+
+    @Override
+    public List<Grade> findByStudentId(Integer studentId) {
+        return gradeRepository.findByStudentId(studentId);
+    }
+
+    @Override
+    public List<Grade> findByCourseId(Integer courseId) {
+        return gradeRepository.findByCourseId(courseId);
+    }
+
+    @Override
+    public Long countByCourseIdAndGrade(Integer courseId, Double grade) {
+        return gradeRepository.countByCourseIdAndGrade(courseId, grade);
+    }
+
+    @Override
+    public boolean existsByCourseId(Integer courseId) {
+        return gradeRepository.existsByCourseId(courseId);
     }
 }

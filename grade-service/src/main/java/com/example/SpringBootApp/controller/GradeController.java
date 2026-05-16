@@ -42,4 +42,26 @@ public class GradeController {
     public boolean delete(@PathVariable Integer id) {
         return gradeService.deleteGrade(id);
     }
+
+
+
+    @GetMapping("/student/{studentId}")
+    public List<Grade> getByStudentId(@PathVariable Integer studentId) {
+        return gradeService.findByStudentId(studentId);
+    }
+
+    @GetMapping("/course/{courseId}")
+    public List<Grade> getByCourseId(@PathVariable Integer courseId) {
+        return gradeService.findByCourseId(courseId);
+    }
+
+    @GetMapping("/course/{courseId}/failed/count")
+    public Long getFailedCount(@PathVariable Integer courseId) {
+        return gradeService.countByCourseIdAndGrade(courseId, 2.0);
+    }
+
+    @GetMapping("/course/{courseId}/exists")
+    public boolean existsByCourseId(@PathVariable Integer courseId) {
+        return gradeService.existsByCourseId(courseId);
+    }
 }
