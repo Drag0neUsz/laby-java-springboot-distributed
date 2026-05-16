@@ -1,6 +1,7 @@
 package com.example.SpringBootApp.controller;
 
 import com.example.SpringBootApp.model.dto.GradeDetailsDTO;
+import com.example.SpringBootApp.model.dto.StudentDTO;
 import com.example.SpringBootApp.service.GatewayService;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -28,5 +29,10 @@ public class GatewayController {
     @GetMapping("/courses/{id}/failed")
     public Long getFailedCount(@PathVariable Integer id) {
         return gatewayService.countFailedStudents(id);
+    }
+
+    @GetMapping("/students/top")
+    public List<StudentDTO> getTopStudents() {
+        return gatewayService.getTopStudents();
     }
 }

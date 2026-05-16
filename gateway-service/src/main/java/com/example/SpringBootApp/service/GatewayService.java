@@ -22,8 +22,8 @@ public class GatewayService {
 
     private void studentExists(Integer studentId) {
         try {
-            restTemplate.getForObject(STUDENT_URL + studentId, StudentDTO.class);
-        } catch (HttpClientErrorException.NotFound e) {
+            restTemplate.getForObject("http://localhost:8081/students/" + studentId, StudentDTO.class);
+        } catch (org.springframework.web.client.HttpStatusCodeException e) {
             throw new StudentNotFoundException();
         }
     }
@@ -32,7 +32,7 @@ public class GatewayService {
     private void courseExists(Integer courseId) {
         try {
             restTemplate.getForObject(COURSE_URL + courseId, CourseDTO.class);
-        } catch (HttpClientErrorException.NotFound e) {
+        } catch (org.springframework.web.client.HttpStatusCodeException e) {
             throw new CourseNotFoundException();
         }
     }
@@ -42,7 +42,7 @@ public class GatewayService {
 
         GradeDTO[] grades = restTemplate.getForObject(GRADE_URL + "student/" + studentId, GradeDTO[].class);
         if (grades == null || grades.length == 0) {
-            return 0.0; // lub rzuć wyjątek, jeśli wolisz
+            throw new EmptyResultException("Student with ID " + studentId + " has no grades");
         }
 
         double sumProduct = 0.0;
@@ -65,8 +65,9 @@ public class GatewayService {
         studentExists(studentId);
 
         GradeDTO[] grades = restTemplate.getForObject(GRADE_URL + "student/" + studentId, GradeDTO[].class);
+
         if (grades == null || grades.length == 0) {
-            throw new EmptyResultException("Student o ID " + studentId + " nie posiada żadnych ocen.");
+            throw new EmptyResultException("Student with ID " + studentId + " has no grades");
         }
 
         return Arrays.stream(grades).map(g -> {
@@ -79,5 +80,35 @@ public class GatewayService {
         courseExists(courseId);
 
         return restTemplate.getForObject(GRADE_URL + "course/" + courseId + "/failed/count", Long.class);
+    }
+
+    public List<StudentDTO> getTopStudents() {
+        StudentDTO[] allStudents;
+
+        try {
+            allStudents = restTemplate.getForObject("http://localhost:8081/students", StudentDTO[].class);
+        } catch (org.springframework.web.client.HttpStatusCodeException e) {
+            throw new EmptyResultException("Cannot access student list");
+        }
+
+        if (allStudents == null || allStudents.length == 0) {
+            throw new EmptyResultException("No students saved");
+        }
+
+        List<StudentDTO> topStudents = java.util.Arrays.stream(allStudents)
+                .filter(student -> {
+                    try {
+                        Double avg = getStudentWeightedAverage(student.getId());
+                        return avg != null && avg >= 4.75;
+                    } catch (Exception e) {
+                        return false;
+                    }
+                })
+                .toList();
+        if (topStudents.isEmpty()) {
+            throw new EmptyResultException("No students with gpa > 4.75");
+        }
+
+        return topStudents;
     }
 }

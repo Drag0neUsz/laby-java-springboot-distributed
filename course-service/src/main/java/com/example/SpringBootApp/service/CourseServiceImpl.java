@@ -24,7 +24,8 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public Course getCourseById(Integer id) {
-        return courseRepository.findById(id).orElse(null);
+        return courseRepository.findById(id)
+                .orElseThrow(CourseNotFoundException::new);
     }
 
     @Override

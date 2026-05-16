@@ -2,7 +2,7 @@ package com.example.SpringBootApp.model.dto;
 
 public class StudentDTO {
     private Integer id;
-    private String name;
+    private String firstName;
     private Integer age;
 
     public StudentDTO() {};
@@ -14,11 +14,11 @@ public class StudentDTO {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getFirstName() {
+        return firstName;
     }
-    public void setName(String name) {
-        this.name = name;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
 
     public Integer getAge() {
