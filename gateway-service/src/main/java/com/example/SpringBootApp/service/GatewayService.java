@@ -111,4 +111,26 @@ public class GatewayService {
 
         return topStudents;
     }
+
+    public List<String> getStudentCourseNames(Integer studentId) {
+        studentExists(studentId);
+
+        GradeDTO[] grades = restTemplate.getForObject(GRADE_URL + "student/" + studentId, GradeDTO[].class);
+        if (grades == null || grades.length == 0) {
+            throw new EmptyResultException("No courses with grades found");
+        }
+
+        return java.util.Arrays.stream(grades)
+                .map(GradeDTO::getCourseId)
+                .distinct()
+                .map(courseId -> {
+                    try {
+                        CourseDTO course = restTemplate.getForObject(COURSE_URL + courseId, CourseDTO.class);
+                        return course != null ? course.getName() : "Unknown course";
+                    } catch (Exception e) {
+                        return "Error getting course name";
+                    }
+                })
+                .toList();
+    }
 }

@@ -35,4 +35,8 @@ public class GatewayController {
     public List<StudentDTO> getTopStudents() {
         return gatewayService.getTopStudents();
     }
+    @GetMapping("/students/{id}/graded-courses")
+    public List<String> getStudentCourseNames(@PathVariable Integer id) {
+        return gatewayService.getStudentCourseNames(id);
+    }
 }
