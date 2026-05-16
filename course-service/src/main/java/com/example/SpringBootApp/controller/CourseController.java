@@ -44,11 +44,6 @@ public class CourseController {
         return courseService.deleteCourse(id);
     }
 
-    @GetMapping("/{id}/failed")
-    public Long getFailedCount(@PathVariable Integer id) throws CourseNotFoundException {
-        return courseService.countFailedStudents(id);
-    }
-
     @GetMapping("/ects/{ects}")
     public List<Course> getByEcts(@PathVariable Integer ects) {
         return courseService.getCoursesByEcts(ects);
