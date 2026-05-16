@@ -9,7 +9,14 @@ A small multi-module Spring Boot app with separate student, course, grade, and g
    ```bash
    mvn test
    ```
-3. Run services (separately):
+3. Run services (separately), for example:
+   ```bash
+   mvn -pl student-service spring-boot:run
+   mvn -pl course-service spring-boot:run
+   mvn -pl grade-service spring-boot:run
+   mvn -pl gateway-service spring-boot:run
+   ```
+4. Default ports/endpoints:
    - `student-service` on `:8081` (`/students`)
    - `course-service` on `:8082` (`/courses`)
    - `grade-service` on `:8083` (`/grades`)
