@@ -4,6 +4,7 @@ import com.example.SpringBootApp.exception.GradeNotFoundException;
 import com.example.SpringBootApp.model.Grade;
 import com.example.SpringBootApp.service.GradeService;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -61,7 +62,13 @@ public class GradeController {
     }
 
     @GetMapping("/course/{courseId}/exists")
-    public boolean existsByCourseId(@PathVariable Integer courseId) {
-        return gradeService.existsByCourseId(courseId);
+    public ResponseEntity<Boolean> existsByCourseId(@PathVariable Integer courseId) {
+        boolean exists = gradeService.existsByCourseId(courseId);
+        return ResponseEntity.ok(exists);
+    }
+
+    @DeleteMapping("/student/{studentId}")
+    public void deleteGradesByStudentId(@PathVariable Integer studentId) {
+        gradeService.deleteByStudentId(studentId);
     }
 }

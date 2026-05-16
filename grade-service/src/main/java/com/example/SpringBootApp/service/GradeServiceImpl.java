@@ -1,13 +1,17 @@
 package com.example.SpringBootApp.service;
 
+import com.example.SpringBootApp.exception.CourseNotFoundException;
 import com.example.SpringBootApp.exception.GradeInvalidGradeException;
 import com.example.SpringBootApp.exception.GradeNotFoundException;
 
+import com.example.SpringBootApp.exception.StudentNotFoundException;
 import com.example.SpringBootApp.model.Grade;
 
 import com.example.SpringBootApp.repository.GradeRepository;
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpStatusCodeException;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.Arrays;
 import java.util.List;
@@ -22,7 +26,7 @@ public class GradeServiceImpl implements GradeService {
     }
 
     private final GradeRepository gradeRepository;
-
+    private final RestTemplate restTemplate = new RestTemplate();
 
     public GradeServiceImpl(GradeRepository gradeRepository) {
         this.gradeRepository = gradeRepository;
@@ -42,6 +46,18 @@ public class GradeServiceImpl implements GradeService {
     @Override
     public Grade addGrade(Grade grade) throws GradeInvalidGradeException {
         validateGradeValue(grade.getGrade());
+
+        try {
+            restTemplate.getForObject("http://localhost:8081/students/" + grade.getStudentId(), Object.class);
+        } catch (HttpStatusCodeException e) {
+            throw new StudentNotFoundException();
+        }
+        
+        try {
+            restTemplate.getForObject("http://localhost:8082/courses/" + grade.getCourseId(), Object.class);
+        } catch (HttpStatusCodeException e) {
+            throw new CourseNotFoundException();
+        }
 
         return gradeRepository.save(grade);
     }
@@ -87,4 +103,6 @@ public class GradeServiceImpl implements GradeService {
     public boolean existsByCourseId(Integer courseId) {
         return gradeRepository.existsByCourseId(courseId);
     }
+
+    public void deleteByStudentId(Integer studentId) {gradeRepository.deleteByStudentId(studentId);}
 }

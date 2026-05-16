@@ -5,6 +5,7 @@ import com.example.SpringBootApp.exception.*;
 import com.example.SpringBootApp.model.Student;
 import com.example.SpringBootApp.repository.StudentRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
@@ -35,11 +36,19 @@ public class StudentServiceImpl implements StudentService {
         return studentRepository.save(student);
     }
 
+    private final RestTemplate restTemplate = new RestTemplate();
     @Override
-    public boolean deleteStudent(Integer id) throws StudentNotFoundException {
+    public boolean deleteStudent(Integer id) {
         if (!studentRepository.existsById(id)) {
             throw new StudentNotFoundException();
         }
+
+        try {
+            restTemplate.delete("http://localhost:8083/grades/student/" + id);
+        } catch (Exception e) {
+            throw new RuntimeException();
+        }
+
         studentRepository.deleteById(id);
         return true;
     }

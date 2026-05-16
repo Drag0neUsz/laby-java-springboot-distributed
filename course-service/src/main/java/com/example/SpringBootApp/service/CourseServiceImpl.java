@@ -5,6 +5,8 @@ import com.example.SpringBootApp.model.Course;
 import com.example.SpringBootApp.repository.CourseRepository;
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
 import java.util.List;
 
 @Service
@@ -55,10 +57,21 @@ public class CourseServiceImpl implements CourseService {
         return courseRepository.save(course);
     }
 
+    private final RestTemplate restTemplate = new RestTemplate();
+
     @Override
-    public boolean deleteCourse(Integer id) throws CourseNotFoundException, CourseHasGradesException {
+    public boolean deleteCourse(Integer id) {
         if (!courseRepository.existsById(id)) {
             throw new CourseNotFoundException();
+        }
+        try {
+            Boolean hasGrades = restTemplate.getForObject("http://localhost:8083/grades/course/" + id + "/exists", Boolean.class);
+
+            if (hasGrades != null && hasGrades) {
+                throw new CourseHasGradesException();
+            }
+        } catch (org.springframework.web.client.HttpStatusCodeException e) {
+            throw new RuntimeException("runtime exception");
         }
 
         courseRepository.deleteById(id);

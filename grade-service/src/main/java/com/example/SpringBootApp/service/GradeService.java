@@ -15,6 +15,7 @@ public interface GradeService {
     Grade updateGrade(Integer id, Grade gradeDetails) throws GradeNotFoundException, GradeInvalidGradeException;
     boolean deleteGrade(Integer id) throws GradeNotFoundException;
 
+    void deleteByStudentId(Integer studentId);
     List<Grade> findByStudentId(Integer studentId);
     List<Grade> findByCourseId(Integer courseId);
     Long countByCourseIdAndGrade(Integer courseId, Double grade);
